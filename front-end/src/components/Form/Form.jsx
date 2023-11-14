@@ -14,8 +14,9 @@ export function Form({ onFormSubmit }) {
 			translation,
 			category,
 		};
-
 		onFormSubmit(newItem);
+		setWord('');
+		setTranslation('');
 	}
 
 	return (

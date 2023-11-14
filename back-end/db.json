@@ -13,10 +13,22 @@
       "category": "noun"
     },
     {
-      "id": 3,
-      "word": "skakać",
-      "translation": "jump",
-      "category": "verb"
+      "word": "żółw",
+      "translation": "turtle",
+      "category": "noun",
+      "id": 3
+    },
+    {
+      "word": "biegać",
+      "translation": "run",
+      "category": "verb",
+      "id": 4
+    },
+    {
+      "word": "drzwi",
+      "translation": "door",
+      "category": "noun",
+      "id": 5
     }
   ]
 }

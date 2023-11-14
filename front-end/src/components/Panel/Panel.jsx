@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { List } from '../List/List';
 import { Form } from '../Form/Form';
-import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import { FilterButton } from '../FilterButton/FilterButton';
 import { Info } from '../Info/Info';
 import styles from './Panel.module.css';
@@ -10,22 +9,31 @@ import { getCategoryInfo } from '../../utils/getCategoryInfo';
 // zapisaliśmy adres do API w zmiennej, żeby nie powtarzać go w wielu miejscach
 const url = 'http://localhost:3000/words';
 
-export function Panel() {
+export function Panel({ onError }) {
 	const [data, setData] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState(null);
+	// Przenosimy do App.jsx. Inne komponenty będą mogły korzystać z tego błędu, więc przenosimy go do najwyższego komponentu
+	// const [error, setError] = useState(null);
 	const [selectedCategory, setSelectedCategory] = useState(null);
 
 	useEffect(() => {
 		// jeśli category jest null, to zwracamy pusty string (bez parametru category) i pobieramy wszystkie słowa
 		const params = selectedCategory ? `?category=${selectedCategory}` : '';
 		fetch(`${url}${params}`)
-			.then((res) => res.json())
+			.then((res) => {
+				if (res.ok) {
+					return res.json();
+				}
+				throw new Error('Błąd ładowania danych!');
+			})
 			.then((res) => {
 				setData(res);
 				setIsLoading(false);
+			})
+			.catch((e) => {
+				onError(e);
 			});
-	}, [selectedCategory]);
+	}, [selectedCategory, onError]);
 
 	// useMemo pozwala nam zapamiętać wartość, która będzie się zmieniać tylko wtedy, gdy zmieni się selectedCategory
 	const categoryInfo = useMemo(
@@ -63,11 +71,7 @@ export function Panel() {
 			})
 			// catch łapie błędy z then, wywołuje się, gdy w then pojawi się błąd
 			.catch((e) => {
-				setError(e.message);
-				// usuwamy komunikat o błędzie po 3 sekundach
-				setTimeout(() => {
-					setError(null);
-				}, 3000);
+				onError(e);
 			});
 	}
 
@@ -82,7 +86,6 @@ export function Panel() {
 
 	return (
 		<>
-			{error && <ErrorMessage>{error}</ErrorMessage>}
 			<section className={styles.section}>
 				<Info>{categoryInfo}</Info>
 				<Form onFormSubmit={handleFormSubmit} />
