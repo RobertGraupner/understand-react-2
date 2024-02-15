@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import styles from './SubPage.module.css';
 
 export function SubPage() {
