@@ -6,7 +6,7 @@ import { Info } from '../Info/Info';
 import styles from './Panel.module.css';
 import { getCategoryInfo } from '../../utils/getCategoryInfo';
 
-// zapisaliśmy adres do API w zmiennej, żeby nie powtarzać go w wielu miejscach
+// zapisaliśmy adres do API w stałej, żeby nie powtarzać go w wielu miejscach
 const url = 'http://localhost:3000/words';
 
 export function Panel({ onError }) {
@@ -36,6 +36,7 @@ export function Panel({ onError }) {
 	}, [selectedCategory, onError]);
 
 	// useMemo pozwala nam zapamiętać wartość, która będzie się zmieniać tylko wtedy, gdy zmieni się selectedCategory
+	// pozwala to na uniknięcie zbędnego wywoływania funkcji getCategoryInfo, gdy selectedCategory się nie zmienia (czyli wtedy, gdy wywołujemy funkcję getCategoryInfo z tą samą wartością, co poprzednio). Jeśli dodamy lub usuniemy słowo, to selectedCategory się nie zmienia, więc getCategoryInfo nie będzie wywoływane ponownie mimo zmiany w data
 	const categoryInfo = useMemo(
 		() => getCategoryInfo(selectedCategory),
 		[selectedCategory]
@@ -51,6 +52,7 @@ export function Panel({ onError }) {
 		})
 			.then((res) => res.json())
 			.then((res) => {
+				// jeśli wybrano kategorię i nie zgadza się z kategorią nowego słowa, to nie dodajemy go do tablicy
 				if (!selectedCategory || selectedCategory === res.category) {
 					setData((prevData) => [...prevData, res]);
 				}

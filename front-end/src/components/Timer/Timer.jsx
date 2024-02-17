@@ -20,10 +20,13 @@ function secondsToMinutes(seconds) {
 export function Timer() {
 	const [time, setTime] = useState(0);
 	// useRef pozwala nam zapamiętać wartość, która będzie się zmieniać, ale nie będzie powodować rerendera komponentu
+	// useRef jest używane do przechowywania wartości, które nie powodują zmiany wyglądu komponentu
+	// wartosc jest aktualizowana na bieżąco
 	const intervalRef = useRef(null);
 
 	function handleStartClick() {
 		// jeśli intervalRef.current jest null, uruchamiamy interwał. Rerendery nie będą powodowały ponownego uruchamiania interwału
+		// useRef tworzy obiekt, ktory ma pole current, ktore moze przechowywac dowolna wartosc
 		if (intervalRef.current === null) {
 			intervalRef.current = setInterval(() => {
 				setTime((prevTime) => prevTime + 1);
